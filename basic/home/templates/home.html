@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4f4f4;
+            --container-bg: #fff;
+            --text-color: #333;
+            --header-color: #2c3e50;
+            --button-bg: #000000;
+            --button-text: #ffffff;
+            --button-hover: #333333;
+            --progress-bg: #e0e0e0;
+            --progress-fill: #000000;
+            --progress-text: #ffffff;
+            --table-header-bg: #f2f2f2;
+            --table-row-hover: #f5f5f5;
+            --table-row-even: #fafafa;
+            --border-color: #ddd;
+            --theme-toggle-bg: #f0f0f0;
+            --theme-toggle-color: #333;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --container-bg: #2c2c2c;
+            --text-color: #e0e0e0;
+            --header-color: #ffffff;
+            --button-bg: #000000;
+            --button-text: #ffffff;
+            --button-hover: #333333;
+            --progress-bg: #444;
+            --progress-fill: #ffffff;
+            --progress-text: #000000;
+            --table-header-bg: #333;
+            --table-row-hover: #3a3a3a;
+            --table-row-even: #2f2f2f;
+            --border-color: #444;
+            --theme-toggle-bg: #333;
+            --theme-toggle-color: #f0f0f0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: var(--header-color);
+            text-align: center;
+            margin-bottom: 30px;
+            transition: color 0.3s ease;  /* Added transition for smooth color change */
+        }
+        .form-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-container input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 200px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+        }
+        .form-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-container button:hover {
+            background-color: var(--button-hover);
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: var(--progress-bg);
+            padding: 3px;
+            border-radius: 13px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px; 
+        }
+        .progress-bar-fill {
+            display: block;
+            height: 20px;
+            background-color: var(--progress-fill);
+            border-radius: 10px;
+            transition: width 0.5s ease-out, background-color 0.3s ease;
+        }
+        .progress-bar-text {
+            color: var(--progress-text);
+            font-weight: bold;
+            text-align: center;
+            line-height: 20px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .table th {
+            background-color: var(--table-header-bg);
+            font-weight: 500;
+            color: var(--text-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .table tbody tr:hover {
+            background-color: var(--table-row-hover);
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: var(--table-row-even);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .theme-toggle {
+            background-color: var(--theme-toggle-bg);
+            color: var(--theme-toggle-color);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .theme-toggle:hover {
+            opacity: 0.8;
+        }
+        @media (max-width: 600px) {
+            .form-container input[type="number"], .form-container button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Student Data Generator</h1>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                <i class="fas fa-sun"></i>
+            </button>
+        </div>
+
+        <div class="form-container">
+            <form id="generate-students-form">
+                <input type="number" id="total-students" min="1" required placeholder="Number of students">
+                <button type="submit">Generate Students</button>
+            </form>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 0%;">
+                <div class="progress-bar-text">0%</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Address</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="student-table-body">
+                    <!-- Dynamic content will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const progressBarFill = document.querySelector('.progress-bar-fill');
+        const progressBarText = document.querySelector('.progress-bar-text');
+        const studentTableBody = document.getElementById('student-table-body');
+        const generateStudentsForm = document.getElementById('generate-students-form');
+        const totalStudentsInput = document.getElementById('total-students');
+
+        const socket = new WebSocket('ws://localhost:8000/ws/new/');
+
+        let currentCount = 0;
+        let totalStudents = 0;
+
+        function updateProgressBar() {
+            const percentage = (currentCount / totalStudents) * 100;
+            progressBarFill.style.width = percentage + '%';
+            progressBarText.textContent = `${currentCount}/${totalStudents} students (${Math.round(percentage)}%)`;
+        }
+
+        function resetProgressBar() {
+            currentCount = 0;
+            totalStudents = 0;
+            progressBarFill.style.width = '0%';
+            progressBarText.textContent = '0%';
+            studentTableBody.innerHTML = '';
+        }
+
+        socket.onmessage = function(event) {
+            console.log('Received message:', event.data);
+            const data = JSON.parse(event.data);
+            if (data.payload) {
+                const studentData = data.payload;
+                console.log('Student data:', studentData);
+
+                currentCount = parseInt(studentData.current_total);
+                totalStudents = parseInt(studentData.total);
+
+                updateProgressBar();
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${currentCount}</td>
+                    <td>${studentData.student_name || ''}</td>
+                    <td>${studentData.student_age || ''}</td>
+                    <td>${studentData.address || ''}</td>
+                    <td>${studentData.student_email || ''}</td>
+                `;
+                studentTableBody.appendChild(newRow);
+
+                if (currentCount === totalStudents) {
+                    console.log('All students received');
+                }
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.log('WebSocket closed');
+        };
+
+        socket.onerror = function(error) {
+            console.log('WebSocket error:', error);
+        };
+
+        totalStudentsInput.addEventListener('input', resetProgressBar);
+
+        generateStudentsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const totalStudents = totalStudentsInput.value;
+            
+            resetProgressBar();
+
+            fetch(`/students/?total=${totalStudents}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('API response:', data);
+                    if (data.status === 'success 200') {
+                        console.log('Student generation initiated');
+                    } else {
+                        console.error('Error generating students');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeToggle = document.querySelector('.theme-toggle i');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeToggle.classList.replace('fa-moon', 'fa-sun');
+            }
+        }
+
+        // Check for saved theme preference or default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const themeToggle = document.querySelector('.theme-toggle i');
+        themeToggle.classList.add(savedTheme === 'light' ? 'fa-sun' : 'fa-moon');
+    </script>
+</body>
+</html>
